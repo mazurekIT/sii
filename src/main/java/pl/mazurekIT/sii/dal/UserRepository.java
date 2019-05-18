@@ -6,5 +6,7 @@ import pl.mazurekIT.sii.model.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User,Long> {
+        User findByName(String name);
+
 
 }

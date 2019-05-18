@@ -1,8 +1,11 @@
 package pl.mazurekIT.sii.model;
 
+import org.hibernate.validator.constraints.Email;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.UniqueConstraint;
 
 @Entity
 public class User {
@@ -10,6 +13,7 @@ public class User {
     @GeneratedValue
     private Long id;
     private String name;
+    @Email
     private String email;
 
 
