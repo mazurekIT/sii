@@ -1,6 +1,7 @@
 package pl.mazurekIT.sii.ui;
 
 
+import com.vaadin.annotations.StyleSheet;
 import com.vaadin.annotations.Title;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
@@ -14,6 +15,7 @@ import pl.mazurekIT.sii.service.UserService;
 
 @SpringUI
 @Title("Hello Sii")
+//@StyleSheet("vaadin://style.css")
 public class HelloSii extends UI {
 
     Logger logger = LoggerFactory.getLogger("Hello Sii");
@@ -32,6 +34,46 @@ public class HelloSii extends UI {
         Panel conferencePlan = new Panel("Plan Konferencji");
         conferencePlan.addStyleName("register-panel");
         conferencePlan.setSizeUndefined();
+        mainLayout.addComponent(conferencePlan);
+
+        GridLayout gridConferencePlan = new GridLayout(5, 6);
+        gridConferencePlan.setSpacing(true);
+        gridConferencePlan.addStyleName("grid-plan");
+        gridConferencePlan.setSizeUndefined();
+
+        gridConferencePlan.addComponent(new Label("Data"), 0, 0, 0, 1);
+        gridConferencePlan.addComponent(new Label("Godzina"), 1, 0, 1, 1);
+        gridConferencePlan.addComponent(new Label("Tematy wykładów"), 2, 0, 4, 0);
+        gridConferencePlan.addComponent(new Label("Temat A"), 2, 1, 2, 1);
+        gridConferencePlan.addComponent(new Label("Temat B"), 3, 1, 3, 1);
+        gridConferencePlan.addComponent(new Label("Temat C"), 4, 1, 4, 1);
+
+
+        gridConferencePlan.addComponent(new Label("1 czerwca"), 0, 2, 0, 3);
+        gridConferencePlan.addComponent(new Label("2 czerwca"), 0, 4, 0, 5);
+
+        gridConferencePlan.addComponent(new Label("10:00-11:45"), 1, 2, 1, 2);
+        gridConferencePlan.addComponent(new Label("12:00-13:45"), 1, 3, 1, 3);
+        gridConferencePlan.addComponent(new Label("10:00-11:45"), 1, 4, 1, 4);
+        gridConferencePlan.addComponent(new Label("12:00-13:45"), 1, 5, 1, 5);
+
+        gridConferencePlan.addComponent(new Button("1-10-A"));
+        gridConferencePlan.addComponent(new Button("1-10-B"));
+        gridConferencePlan.addComponent(new Button("1-10-C"));
+
+        gridConferencePlan.addComponent(new Button("1-12-A"));
+        gridConferencePlan.addComponent(new Button("1-12-B"));
+        gridConferencePlan.addComponent(new Button("1-12-C"));
+
+        gridConferencePlan.addComponent(new Button("2-10-A"));
+        gridConferencePlan.addComponent(new Button("2-10-B"));
+        gridConferencePlan.addComponent(new Button("2-10-C"));
+
+        gridConferencePlan.addComponent(new Button("2-12-A"));
+        gridConferencePlan.addComponent(new Button("2-12-B"));
+        gridConferencePlan.addComponent(new Button("2-12-C"));
+
+        conferencePlan.setContent(gridConferencePlan);
         mainLayout.addComponent(conferencePlan);
 
 
@@ -95,10 +137,5 @@ public class HelloSii extends UI {
     }
 
 
-    private Label addLabel(String text, String className) {
-        Label label = new Label(text);
-        label.setStyleName(className);
-        return label;
-    }
 
 }
