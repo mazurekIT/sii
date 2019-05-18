@@ -15,10 +15,10 @@ import pl.mazurekIT.sii.service.UserService;
 
 @SpringUI
 @Title("Hello Sii")
-//@StyleSheet("vaadin://style.css")
+@StyleSheet("vaadin://style.css")
 public class HelloSii extends UI {
 
-    Logger logger = LoggerFactory.getLogger("Hello Sii");
+    Logger logger = LoggerFactory.getLogger("LOGGER INFO");
 
     @Autowired
     private UserService userService;
@@ -57,7 +57,11 @@ public class HelloSii extends UI {
         gridConferencePlan.addComponent(new Label("10:00-11:45"), 1, 4, 1, 4);
         gridConferencePlan.addComponent(new Label("12:00-13:45"), 1, 5, 1, 5);
 
-        gridConferencePlan.addComponent(new Button("1-10-A"));
+        gridConferencePlan.addComponent(new Button("1-10-A",clickEvent -> {
+            Notification.show("Zapisanano się na wykład");
+            logger.info("zapisano się na wykład");
+
+        }));
         gridConferencePlan.addComponent(new Button("1-10-B"));
         gridConferencePlan.addComponent(new Button("1-10-C"));
 
@@ -72,6 +76,10 @@ public class HelloSii extends UI {
         gridConferencePlan.addComponent(new Button("2-12-A"));
         gridConferencePlan.addComponent(new Button("2-12-B"));
         gridConferencePlan.addComponent(new Button("2-12-C"));
+
+
+
+        //TODO add events to buttons
 
         conferencePlan.setContent(gridConferencePlan);
         mainLayout.addComponent(conferencePlan);
@@ -105,6 +113,7 @@ public class HelloSii extends UI {
         grid.addColumn(User::getName).setCaption("Nazwa");
         grid.addColumn(User::getEmail).setCaption("Email");
         grid.setItems(userService.getAllUsers());
+        mainLayout.addComponent(grid);
 
 
         btnSubmit.addClickListener(clic -> {
@@ -119,7 +128,7 @@ public class HelloSii extends UI {
             }
         });
 
-        mainLayout.addComponent(grid);
+
     }
 
     private boolean isValid(TextField tfName) {
