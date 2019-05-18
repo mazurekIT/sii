@@ -4,35 +4,60 @@ package pl.mazurekIT.sii.ui;
 import com.vaadin.annotations.Title;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.*;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 
 @SpringUI
 @Title("Hello Sii")
 public class HelloSii extends UI {
 
+    Logger logger = LoggerFactory.getLogger("Hello Sii");
+
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
         VerticalLayout mainLayout = new VerticalLayout();
-
-        mainLayout.addComponent(addLabel("Plan Konferencji", "main-label"));
-
-        registrationUserForm();
-
-
         setContent(mainLayout);
 
 
+        // conference plan view
+        Panel conferencePlan = new Panel("Plan Konferencji");
+        conferencePlan.addStyleName("register-panel");
+        conferencePlan.setSizeUndefined();
+        mainLayout.addComponent(conferencePlan);
+
+
+        // registration panel with save to DB
+        Panel registrationPanel = new Panel("Rejestracja");
+        registrationPanel.addStyleName("register-panel");
+        registrationPanel.setSizeUndefined();
+        mainLayout.addComponent(registrationPanel);
+        // Create the content
+        FormLayout registrationForm = new FormLayout();
+        registrationForm.addStyleName("register-form");
+        TextField tfName = new TextField("Nazwa użytkownika");
+        tfName.setRequiredIndicatorVisible(true);
+        tfName.setMaxLength(40);
+
+        TextField tfEmail = new TextField("Email");
+        tfEmail.setRequiredIndicatorVisible(true);
+
+        Button btnSubmit = new Button("Zapisz");
+
+        registrationForm.addComponent(tfName);
+        registrationForm.addComponent(tfEmail);
+        registrationForm.addComponent(btnSubmit);
+
+        registrationPanel.setContent(registrationForm);
+
+
+
+
+
     }
 
-    private void registrationUserForm() {
-        new Panel("Registration Panel");
-
-    }
 
 
     private Label addLabel(String text, String className) {
