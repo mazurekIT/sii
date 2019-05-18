@@ -22,8 +22,6 @@ public class HelloSii extends UI {
     private UserService userService;
 
 
-
-
     @Override
     protected void init(VaadinRequest vaadinRequest) {
         VerticalLayout mainLayout = new VerticalLayout();
@@ -64,13 +62,14 @@ public class HelloSii extends UI {
         grid.addColumn(User::getId).setCaption("ID");
         grid.addColumn(User::getName).setCaption("Nazwa");
         grid.addColumn(User::getEmail).setCaption("Email");
+        grid.setItems(userService.getAllUsers());
 
 
         btnSubmit.addClickListener(clic -> {
-            if (isValid(tfName)){
+            if (isValid(tfName)) {
                 User savedUser = userService.saveUser(new User(tfName.getValue(), tfEmail.getValue()));
-                Notification.show("Zapisano użytkownika o ID: "+ savedUser.getId());
-                logger.info("Zapisano użytkownika z ID: ",savedUser.getId());
+                Notification.show("Zapisano użytkownika o ID: " + savedUser.getId());
+                logger.info("Zapisano użytkownika z ID: " + savedUser.getId());
                 //TODO make write to file a registration message
                 grid.setItems(userService.getAllUsers());
             } else {
@@ -82,10 +81,10 @@ public class HelloSii extends UI {
     }
 
     private boolean isValid(TextField tfName) {
-        boolean isValid=true;
+        boolean isValid = true;
 
         String nameValue = tfName.getValue();
-        if(nameValue.isEmpty()){
+        if (nameValue.isEmpty()) {
             isValid = false;
         }
 
