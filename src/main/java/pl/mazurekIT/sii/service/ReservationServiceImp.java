@@ -33,11 +33,11 @@ public class ReservationServiceImp implements ReservationService{
 
     @Override
     public Reservation updateReservation(Reservation reservation) {
-        return reservation.save;
+        return reservationRepository.save(reservation);
     }
 
     @Override
     public long countReservations() {
-        return 0;
+        return reservationRepository.count();
     }
 }
