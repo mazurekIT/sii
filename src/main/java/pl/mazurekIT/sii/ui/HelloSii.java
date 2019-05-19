@@ -12,6 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import pl.mazurekIT.sii.model.User;
 import pl.mazurekIT.sii.service.UserService;
 
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,36 +94,21 @@ public class HelloSii extends UI {
         buttonsNames.add("2-12-B");
         buttonsNames.add("2-12-C");
 
-        //TODO add events to all buttons
+
+        //TODO przycisk niewidoczny gdy zarejestrowano 5 użytkowników
         for (String button : buttonsNames) {
             gridConferencePlan.addComponent(new Button(button, clickEvent -> {
                 String s = String.valueOf(select.getValue());
                 if (isSomeoneLogged(s)) {
                     Notification.show("Użytkownik " + s + " zapisał się na wykład");
                     logger.info("zapisano się na wykład " + button);
-                    //TODO zapis do pliku wszystkich rejestracji
+                    addLogToFile(LocalDateTime.now().toString() + " - " + s + " - zapisano się na wykład " + button );
+
                 } else {
                     Notification.show("Zaloguj się");
                 }
             }));
         }
-
-
-//        gridConferencePlan.addComponent(new Button("1-10-B"));
-//        gridConferencePlan.addComponent(new Button("1-10-C"));
-//
-//        gridConferencePlan.addComponent(new Button("1-12-A"));
-//        gridConferencePlan.addComponent(new Button("1-12-B"));
-//        gridConferencePlan.addComponent(new Button("1-12-C"));
-//
-//        gridConferencePlan.addComponent(new Button("2-10-A"));
-//        gridConferencePlan.addComponent(new Button("2-10-B"));
-//        gridConferencePlan.addComponent(new Button("2-10-C"));
-//
-//        gridConferencePlan.addComponent(new Button("2-12-A"));
-//        gridConferencePlan.addComponent(new Button("2-12-B"));
-//        gridConferencePlan.addComponent(new Button("2-12-C"));
-
 
         conferencePlan.setContent(gridConferencePlan);
         mainLayout.addComponent(conferencePlan);
@@ -163,6 +153,7 @@ public class HelloSii extends UI {
                 Notification.show("Zapisano użytkownika o ID: " + savedUser.getId());
                 logger.info("Zapisano użytkownika z ID: " + savedUser.getId());
                 //TODO make write to file a registration message
+                addLogToFile(LocalDateTime.now().toString() + " - " + savedUser.getName() + " - zapisano użytkownika " + savedUser.getName() );
                 grid.setItems(userService.getAllUsers());
             } else {
                 Notification.show("Niepoprawne dane");
@@ -192,4 +183,16 @@ public class HelloSii extends UI {
     }
 
 
+    private void addLogToFile(String logg) {
+        try {
+            FileWriter saveLogg = new FileWriter("powiadomienia.txt",true);
+            saveLogg.append(logg);
+            saveLogg.append(System.getProperty( "line.separator"));
+            saveLogg.close();
+        } catch (IOException ex) {
+            System.out.println("Bład zapisu");
+        }
+
+
+    }
 }
