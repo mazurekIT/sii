@@ -3,8 +3,6 @@ package pl.mazurekIT.sii.model;
 import org.hibernate.validator.constraints.Email;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 public class User {
@@ -17,13 +15,6 @@ public class User {
 
     @Email
     private String email;
-
-//    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-//    @JoinTable(name = "user_reservation",
-//            joinColumns = {@JoinColumn(name = "user_id")},
-//            inverseJoinColumns = {@JoinColumn(name = "reservation_id")})
-//    private List<Reservation> reservationList = new ArrayList<>();
-
 
     public User() {
     }
@@ -58,11 +49,4 @@ public class User {
         this.email = email;
     }
 
-//    public List<Reservation> getReservationList() {
-//        return reservationList;
-//    }
-//
-//    public void setReservationList(List<Reservation> reservationList) {
-//        this.reservationList = reservationList;
-//    }
 }

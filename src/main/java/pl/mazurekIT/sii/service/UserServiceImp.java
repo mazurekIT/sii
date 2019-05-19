@@ -9,7 +9,7 @@ import pl.mazurekIT.sii.model.User;
 import java.util.List;
 
 @Service
-public class UserServiceImp implements UserService{
+public class UserServiceImp implements UserService {
 
     @Autowired
     private UserRepository userRepository;
@@ -22,6 +22,11 @@ public class UserServiceImp implements UserService{
     @Override
     public User getUserById(Long id) {
         return userRepository.findOne(id);
+    }
+
+    @Override
+    public User getUserByName(String name){
+        return userRepository.findByName(name);
     }
 
     @Override
@@ -39,10 +44,6 @@ public class UserServiceImp implements UserService{
         userRepository.delete(user);
     }
 
-    @Override
-    public User updateUser(User user) {
-        return userRepository.save(user);
-    }
 
     @Override
     public long countUsers() {

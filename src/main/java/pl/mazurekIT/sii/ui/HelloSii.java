@@ -6,16 +6,12 @@ import com.vaadin.annotations.Title;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import pl.mazurekIT.sii.model.User;
 import pl.mazurekIT.sii.service.UserService;
 
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,31 +22,35 @@ import java.util.List;
 @StyleSheet("vaadin://style.css")
 public class HelloSii extends UI {
 
-    Logger logger = LoggerFactory.getLogger("LOGGER INFO");
-
-
     @Autowired
     private UserService userService;
-
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
         VerticalLayout mainLayout = new VerticalLayout();
         setContent(mainLayout);
 
+        //user select and update email
+        HorizontalLayout horizontalLayout = new HorizontalLayout();
 
-        //user select
         NativeSelect<String> select =
                 new NativeSelect<>("Zaloguj się");
-
         List<String> userNames = new ArrayList<>();
         for (User x : userService.getAllUsers()) {
             userNames.add(x.getName());
         }
-
         select.setItems(userNames);
+        horizontalLayout.addComponent(select);
 
-        mainLayout.addComponent(select);
+
+        TextField emailOfUser = new TextField("Email");
+        emailOfUser.setValue("");
+        horizontalLayout.addComponent(emailOfUser);
+
+        Button btnUpdateEmail = new Button("Zapisz zmiany");
+        horizontalLayout.addComponent(btnUpdateEmail);
+
+        mainLayout.addComponent(horizontalLayout);
 
 
         // conference plan view
@@ -70,11 +70,8 @@ public class HelloSii extends UI {
         gridConferencePlan.addComponent(new Label("Temat A"), 2, 1, 2, 1);
         gridConferencePlan.addComponent(new Label("Temat B"), 3, 1, 3, 1);
         gridConferencePlan.addComponent(new Label("Temat C"), 4, 1, 4, 1);
-
-
         gridConferencePlan.addComponent(new Label("1 czerwca"), 0, 2, 0, 3);
         gridConferencePlan.addComponent(new Label("2 czerwca"), 0, 4, 0, 5);
-
         gridConferencePlan.addComponent(new Label("10:00-11:45"), 1, 2, 1, 2);
         gridConferencePlan.addComponent(new Label("12:00-13:45"), 1, 3, 1, 3);
         gridConferencePlan.addComponent(new Label("10:00-11:45"), 1, 4, 1, 4);
@@ -95,14 +92,14 @@ public class HelloSii extends UI {
         buttonsNames.add("2-12-C");
 
 
-        //TODO przycisk niewidoczny gdy zarejestrowano 5 użytkowników
+        //TODO set visibility after 5 reservations
+        //TODO set disable topic on the same hour after reserved one
         for (String button : buttonsNames) {
             gridConferencePlan.addComponent(new Button(button, clickEvent -> {
                 String s = String.valueOf(select.getValue());
                 if (isSomeoneLogged(s)) {
                     Notification.show("Użytkownik " + s + " zapisał się na wykład");
-                    logger.info("zapisano się na wykład " + button);
-                    addLogToFile(LocalDateTime.now().toString() + " - " + s + " - zapisano się na wykład " + button );
+                    addLogToFile(LocalDateTime.now().toString() + " - " + s + " - zapisano się na wykład " + button);
 
                 } else {
                     Notification.show("Zaloguj się");
@@ -145,20 +142,27 @@ public class HelloSii extends UI {
         mainLayout.addComponent(grid);
 
 
-        btnSubmit.addClickListener(clic -> {
-
-
+        btnSubmit.addClickListener(click -> {
             if (isValid(tfName)) {
                 User savedUser = userService.saveUser(new User(tfName.getValue(), tfEmail.getValue()));
-                Notification.show("Zapisano użytkownika o ID: " + savedUser.getId());
-                logger.info("Zapisano użytkownika z ID: " + savedUser.getId());
+                Notification.show("Zapisano użytkownika " + savedUser.getName() + " o ID: " + savedUser.getId());
                 //TODO make write to file a registration message
-                addLogToFile(LocalDateTime.now().toString() + " - " + savedUser.getName() + " - zapisano użytkownika " + savedUser.getName() );
+                addLogToFile(LocalDateTime.now().toString() + " - " + savedUser.getName() + " - zapisano użytkownika " + savedUser.getName());
                 grid.setItems(userService.getAllUsers());
             } else {
                 Notification.show("Niepoprawne dane");
             }
 
+        });
+
+        select.addValueChangeListener(click -> {
+            String userName = select.getValue();
+            User user = userService.getUserByName(userName);
+            emailOfUser.setValue(user.getEmail());
+        });
+
+        btnUpdateEmail.addClickListener(click -> {
+            //TODO zmiana email wybranego użytkownika
         });
 
 
@@ -185,14 +189,12 @@ public class HelloSii extends UI {
 
     private void addLogToFile(String logg) {
         try {
-            FileWriter saveLogg = new FileWriter("powiadomienia.txt",true);
+            FileWriter saveLogg = new FileWriter("powiadomienia.txt", true);
             saveLogg.append(logg);
-            saveLogg.append(System.getProperty( "line.separator"));
+            saveLogg.append(System.getProperty("line.separator"));
             saveLogg.close();
         } catch (IOException ex) {
             System.out.println("Bład zapisu");
         }
-
-
     }
 }
