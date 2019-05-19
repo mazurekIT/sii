@@ -30,7 +30,9 @@ public class HelloSii extends UI {
         VerticalLayout mainLayout = new VerticalLayout();
         setContent(mainLayout);
 
-        //user select and update email
+        /*
+        user select and update email - login panel
+         */
         HorizontalLayout horizontalLayout = new HorizontalLayout();
 
         NativeSelect<String> select =
@@ -53,7 +55,9 @@ public class HelloSii extends UI {
         mainLayout.addComponent(horizontalLayout);
 
 
-        // conference plan view
+        /*
+         conference plan view
+         */
         Panel conferencePlan = new Panel("Plan Konferencji");
         conferencePlan.addStyleName("register-panel");
         conferencePlan.setSizeUndefined();
@@ -101,6 +105,7 @@ public class HelloSii extends UI {
                     Notification.show("Użytkownik " + s + " zapisał się na wykład");
                     addLogToFile(LocalDateTime.now().toString() + " - " + s + " - zapisano się na wykład " + button);
 
+
                 } else {
                     Notification.show("Zaloguj się");
                 }
@@ -111,7 +116,9 @@ public class HelloSii extends UI {
         mainLayout.addComponent(conferencePlan);
 
 
-        // registration panel with save to DB
+        /*
+        registration panel with save to DB
+         */
         Panel registrationPanel = new Panel("Rejestracja");
         registrationPanel.addStyleName("register-panel");
         registrationPanel.setSizeUndefined();
@@ -162,7 +169,12 @@ public class HelloSii extends UI {
         });
 
         btnUpdateEmail.addClickListener(click -> {
-            //TODO zmiana email wybranego użytkownika
+            User user = userService.getUserByName(select.getValue());
+            user.setEmail(emailOfUser.getValue());
+            userService.saveUser(user);
+
+            grid.setItems(userService.getAllUsers());
+
         });
 
 
