@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import pl.mazurekIT.sii.model.User;
 import pl.mazurekIT.sii.service.UserService;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @SpringUI
 @Title("Hello Sii")
@@ -19,6 +22,7 @@ import pl.mazurekIT.sii.service.UserService;
 public class HelloSii extends UI {
 
     Logger logger = LoggerFactory.getLogger("LOGGER INFO");
+
 
     @Autowired
     private UserService userService;
@@ -28,6 +32,20 @@ public class HelloSii extends UI {
     protected void init(VaadinRequest vaadinRequest) {
         VerticalLayout mainLayout = new VerticalLayout();
         setContent(mainLayout);
+
+
+        //user select
+        NativeSelect<String> select =
+                new NativeSelect<>("Zaloguj się");
+
+        List<String> userNames = new ArrayList<>();
+        for (User x : userService.getAllUsers()) {
+            userNames.add(x.getName());
+        }
+
+        select.setItems(userNames);
+
+        mainLayout.addComponent(select);
 
 
         // conference plan view
@@ -57,29 +75,50 @@ public class HelloSii extends UI {
         gridConferencePlan.addComponent(new Label("10:00-11:45"), 1, 4, 1, 4);
         gridConferencePlan.addComponent(new Label("12:00-13:45"), 1, 5, 1, 5);
 
-        gridConferencePlan.addComponent(new Button("1-10-A",clickEvent -> {
-            Notification.show("Zapisanano się na wykład");
-            logger.info("zapisano się na wykład");
+        List<String> buttonsNames = new ArrayList<>();
+        buttonsNames.add("1-10-A");
+        buttonsNames.add("1-10-B");
+        buttonsNames.add("1-10-C");
+        buttonsNames.add("1-12-A");
+        buttonsNames.add("1-12-B");
+        buttonsNames.add("1-12-C");
+        buttonsNames.add("2-10-A");
+        buttonsNames.add("2-10-B");
+        buttonsNames.add("2-10-C");
+        buttonsNames.add("2-12-A");
+        buttonsNames.add("2-12-B");
+        buttonsNames.add("2-12-C");
 
-        }));
-        gridConferencePlan.addComponent(new Button("1-10-B"));
-        gridConferencePlan.addComponent(new Button("1-10-C"));
-
-        gridConferencePlan.addComponent(new Button("1-12-A"));
-        gridConferencePlan.addComponent(new Button("1-12-B"));
-        gridConferencePlan.addComponent(new Button("1-12-C"));
-
-        gridConferencePlan.addComponent(new Button("2-10-A"));
-        gridConferencePlan.addComponent(new Button("2-10-B"));
-        gridConferencePlan.addComponent(new Button("2-10-C"));
-
-        gridConferencePlan.addComponent(new Button("2-12-A"));
-        gridConferencePlan.addComponent(new Button("2-12-B"));
-        gridConferencePlan.addComponent(new Button("2-12-C"));
+        //TODO add events to all buttons
+        for (String button : buttonsNames) {
+            gridConferencePlan.addComponent(new Button(button, clickEvent -> {
+                String s = String.valueOf(select.getValue());
+                if (isSomeoneLogged(s)) {
+                    Notification.show("Użytkownik " + s + " zapisał się na wykład");
+                    logger.info("zapisano się na wykład " + button);
+                    //TODO zapis do pliku wszystkich rejestracji
+                } else {
+                    Notification.show("Zaloguj się");
+                }
+            }));
+        }
 
 
+//        gridConferencePlan.addComponent(new Button("1-10-B"));
+//        gridConferencePlan.addComponent(new Button("1-10-C"));
+//
+//        gridConferencePlan.addComponent(new Button("1-12-A"));
+//        gridConferencePlan.addComponent(new Button("1-12-B"));
+//        gridConferencePlan.addComponent(new Button("1-12-C"));
+//
+//        gridConferencePlan.addComponent(new Button("2-10-A"));
+//        gridConferencePlan.addComponent(new Button("2-10-B"));
+//        gridConferencePlan.addComponent(new Button("2-10-C"));
+//
+//        gridConferencePlan.addComponent(new Button("2-12-A"));
+//        gridConferencePlan.addComponent(new Button("2-12-B"));
+//        gridConferencePlan.addComponent(new Button("2-12-C"));
 
-        //TODO add events to buttons
 
         conferencePlan.setContent(gridConferencePlan);
         mainLayout.addComponent(conferencePlan);
@@ -117,6 +156,8 @@ public class HelloSii extends UI {
 
 
         btnSubmit.addClickListener(clic -> {
+
+
             if (isValid(tfName)) {
                 User savedUser = userService.saveUser(new User(tfName.getValue(), tfEmail.getValue()));
                 Notification.show("Zapisano użytkownika o ID: " + savedUser.getId());
@@ -126,9 +167,18 @@ public class HelloSii extends UI {
             } else {
                 Notification.show("Niepoprawne dane");
             }
+
         });
 
 
+    }
+
+    private boolean isSomeoneLogged(String s) {
+        boolean isLogged = true;
+        if (s.equals("null")) {
+            isLogged = false;
+        }
+        return isLogged;
     }
 
     private boolean isValid(TextField tfName) {
@@ -138,13 +188,8 @@ public class HelloSii extends UI {
         if (nameValue.isEmpty()) {
             isValid = false;
         }
-
-
-        //TODO make validation email
-
         return isValid;
     }
-
 
 
 }

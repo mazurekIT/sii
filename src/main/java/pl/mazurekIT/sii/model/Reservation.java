@@ -1,17 +1,22 @@
 package pl.mazurekIT.sii.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
+@Table(name = "reservation")
 public class Reservation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
     private String code;
+
+//    @ManyToMany(fetch = FetchType.LAZY,
+//            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+//            mappedBy = "reservation")
+//    List<User> userList;
 
     public Reservation() {
     }
@@ -35,4 +40,12 @@ public class Reservation {
     public void setCode(String code) {
         this.code = code;
     }
+
+//    public List<User> getUserList() {
+//        return userList;
+//    }
+//
+//    public void setUserList(List<User> userList) {
+//        this.userList = userList;
+//    }
 }
