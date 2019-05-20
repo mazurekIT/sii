@@ -18,10 +18,6 @@ public class ReservationServiceImp implements ReservationService {
         return reservationRepository.save(reservation);
     }
 
-    @Override
-    public List<Reservation> getAllReserwationWhereCodeIsLike(String codeLike) {
-        return reservationRepository.findAllByCodeStartingWith(codeLike);
-    }
 
     @Override
     public List<Reservation> getAllReservationsWhereUserId(Long userId) {

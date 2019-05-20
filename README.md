@@ -4,4 +4,5 @@
 
 
 #TIPS
-usuwanie rejestracji poprzez kliknięcie 
++ usuwanie rejestracji poprzez kliknięcie na liście rezerwacji danego użytkownika
++ dołączyłem buckup bazy danych MySQL

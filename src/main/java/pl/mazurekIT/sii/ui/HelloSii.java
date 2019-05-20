@@ -137,7 +137,6 @@ public class HelloSii extends UI {
         /*
         list of all users
          */
-
         Grid<User> grid = new Grid<>();
         grid.setHeight("300px");
         grid.addColumn(User::getId).setCaption("ID");
@@ -152,7 +151,6 @@ public class HelloSii extends UI {
         for (Button button : buttonsReservation) {
             gridConferencePlan.addComponent(button);
             String btnCaption = button.getCaption();
-            buttonVisibilityAfterFiveReservations(button);
 
             button.addClickListener(click -> {
                 String s = select.getValue();
@@ -164,7 +162,12 @@ public class HelloSii extends UI {
                     reservationService.saveReservation(reservation);
 
                     buttonVisibilityAfterFiveReservations(button);
-                    listOfReservationsGrid.setItems(reservationService.getAllReservationsWhereUserId(getUserId(select.getValue())));
+                    listOfReservationsGrid.setItems(reservationService.getAllReservationsWhereUserId(getUserId(s)));
+                    if (button.isVisible()) {
+                        for (Button buttonAgain : buttonsReservation) {
+                            buttonVisibilityAfterReservationInOneHour(buttonAgain, s);
+                        }
+                    }
                 } else {
                     Notification.show("Zaloguj się");
                 }
@@ -172,23 +175,28 @@ public class HelloSii extends UI {
 
 
             select.addValueChangeListener(click -> {
-                //TODO set disable topic on the same hour after reserved one
-                buttonVisibilityAfterReservationInOneHour(button, select.getValue());
-
-                //this is ok
                 buttonVisibilityAfterFiveReservations(button);
+                if (button.isVisible()) {
+                    String s = select.getValue();
+                    buttonVisibilityAfterReservationInOneHour(button, s);
+                }
             });
+            buttonVisibilityAfterFiveReservations(button);
         }
 
 
         listOfReservationsGrid.addItemClickListener(click -> {
+            String s = select.getValue();
             reservationService.deleteReservation(click.getItem().getId());
             Notification.show("Usunięto rezerwację");
-            addLogToFile(LocalDateTime.now().toString() + " - " + select.getValue() + " - usunięto rezerwację na wykład " + click.getItem().getCode());
-            listOfReservationsGrid.setItems(reservationService.getAllReservationsWhereUserId(getUserId(select.getValue())));
+            addLogToFile(LocalDateTime.now().toString() + " - " + s + " - usunięto rezerwację na wykład " + click.getItem().getCode());
+            listOfReservationsGrid.setItems(reservationService.getAllReservationsWhereUserId(getUserId(s)));
 
             for (Button button : buttonsReservation) {
                 buttonVisibilityAfterFiveReservations(button);
+                if (button.isVisible()) {
+                    buttonVisibilityAfterReservationInOneHour(button, s);
+                }
             }
         });
 
@@ -215,6 +223,12 @@ public class HelloSii extends UI {
                 emailOfUser.setValue(user.getEmail());
                 listOfReservationsGrid.setItems(reservationService.getAllReservationsWhereUserId(getUserId(userName)));
             }
+            for (Button button : buttonsReservation) {
+                buttonVisibilityAfterFiveReservations(button);
+                if (button.isVisible()) {
+                    buttonVisibilityAfterReservationInOneHour(button, userName);
+                }
+            }
         });
 
 
@@ -234,13 +248,13 @@ public class HelloSii extends UI {
         List<String> codeTrimName = new ArrayList<>();
 
         for (Reservation reservation : allReservationsWhereUserId) {
-            codeTrimName.add(reservation.getCode().substring(0, 5));
+            codeTrimName.add(reservation.getCode().substring(0, 4));
         }
-        String buttonSubstring = button.getCaption().substring(0, 5);
+        String buttonSubstring = button.getCaption().substring(0, 4);
 
         boolean flag = true;
         for (String x : codeTrimName) {
-            if (x.equals(buttonSubstring)) {
+            if (buttonSubstring.equals(x)) {
                 flag = false;
             }
         }

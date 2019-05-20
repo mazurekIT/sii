@@ -8,7 +8,6 @@ public interface ReservationService {
 
     Reservation saveReservation(Reservation reservation);
 
-    List<Reservation> getAllReserwationWhereCodeIsLike(String codeLike);
 
     List<Reservation> getAllReservationsWhereUserId(Long userId);
 

@@ -21,12 +21,7 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    public User getUserById(Long id) {
-        return userRepository.findOne(id);
-    }
-
-    @Override
-    public User getUserByName(String name){
+    public User getUserByName(String name) {
         return userRepository.findByName(name);
     }
 
@@ -44,18 +39,4 @@ public class UserServiceImp implements UserService {
         return allUsersNames;
     }
 
-    @Override
-    public void deleteUser(Long id) {
-        userRepository.delete(id);
-    }
-
-    @Override
-    public void deleteUser(User user) {
-        userRepository.delete(user);
-    }
-
-    @Override
-    public long countUsers() {
-        return userRepository.count();
-    }
 }
