@@ -38,26 +38,29 @@ public class HelloSii extends UI {
         /*
         user select and update email - login panel
          */
-        HorizontalLayout horizontalLayout = new HorizontalLayout();
+        HorizontalLayout loginPanel = new HorizontalLayout();
 
-        NativeSelect<String> select =
-                new NativeSelect<>("Zaloguj się");
-        List<String> userNames = new ArrayList<>();
-        for (User x : userService.getAllUsers()) {
-            userNames.add(x.getName());
-        }
-        select.setItems(userNames);
-        horizontalLayout.addComponent(select);
-
+        NativeSelect<String> select = new NativeSelect<>("Zaloguj się");
+        select.setItems(userService.getAllUsersNames());
+        loginPanel.addComponent(select);
 
         TextField emailOfUser = new TextField("Email");
         emailOfUser.setValue("");
-        horizontalLayout.addComponent(emailOfUser);
+        loginPanel.addComponent(emailOfUser);
 
         Button btnUpdateEmail = new Button("Zapisz zmiany");
-        horizontalLayout.addComponent(btnUpdateEmail);
+        loginPanel.addComponent(btnUpdateEmail);
 
-        mainLayout.addComponent(horizontalLayout);
+        mainLayout.addComponent(loginPanel);
+
+
+        /*
+        user reservations
+         */
+        Grid<Reservation> listOfReservations = new Grid<>();
+        listOfReservations.setHeight("200");
+        listOfReservations.addColumn(Reservation::getCode).setCaption("Rezerwacje użytkownika");
+        mainLayout.addComponent(listOfReservations);
 
 
         /*
@@ -86,7 +89,6 @@ public class HelloSii extends UI {
         gridConferencePlan.addComponent(new Label("10:00-11:45"), 1, 4, 1, 4);
         gridConferencePlan.addComponent(new Label("12:00-13:45"), 1, 5, 1, 5);
 
-
         List<Button> buttonsReservation = new ArrayList<>();
         buttonsReservation.add(new Button("1-10-A"));
         buttonsReservation.add(new Button("1-10-B"));
@@ -100,28 +102,6 @@ public class HelloSii extends UI {
         buttonsReservation.add(new Button("2-12-A"));
         buttonsReservation.add(new Button("2-12-B"));
         buttonsReservation.add(new Button("2-12-C"));
-
-
-        //TODO set visibility after 5 reservations
-        //TODO set disable topic on the same hour after reserved one
-        for (Button button : buttonsReservation) {
-            gridConferencePlan.addComponent(button);
-
-            button.addClickListener(click -> {
-                String s = select.getValue();
-                String btnCaption = button.getCaption();
-                if (isSomeoneLogged(s)) {
-                    Notification.show("Użytkownik " + s + " zapisał się na wykład");
-                    addLogToFile(LocalDateTime.now().toString() + " - " + s + " - zapisano się na wykład " + btnCaption );
-                    User user = userService.getUserByName(s);
-                    Reservation reservation = new Reservation(btnCaption, user.getId());
-                    reservationService.saveReservation(reservation);
-                } else {
-                    Notification.show("Zaloguj się");
-                }
-            });
-        }
-
 
         conferencePlan.setContent(gridConferencePlan);
         mainLayout.addComponent(conferencePlan);
@@ -158,34 +138,53 @@ public class HelloSii extends UI {
         grid.addColumn(User::getEmail).setCaption("Email");
         grid.setItems(userService.getAllUsers());
         mainLayout.addComponent(grid);
-//
-//        Grid<Reservation> gridReser = new Grid<>();
-//        gridReser.addColumn(Reservation::getId).setCaption("ID");
-//        gridReser.addColumn(Reservation::getCode).setCaption("Code");
-//        gridReser.addColumn(Reservation::getUserId).setCaption("userid");
-//        gridReser.setItems(reservationService.getAllReservations());
-//        mainLayout.addComponent(gridReser);
+
         /*
         buttons events
          */
+        //TODO set visibility after 5 reservations
+        //TODO set disable topic on the same hour after reserved one
+        for (Button button : buttonsReservation) {
+            gridConferencePlan.addComponent(button);
+            String btnCaption = button.getCaption();
+
+            button.addClickListener(click -> {
+                String s = select.getValue();
+                if (isSomeoneLogged(s)) {
+                    Notification.show("Użytkownik " + s + " zapisał się na wykład");
+                    addLogToFile(LocalDateTime.now().toString() + " - " + s + " - zapisano się na wykład " + btnCaption);
+                    User user = userService.getUserByName(s);
+                    Reservation reservation = new Reservation(btnCaption, user.getId());
+                    reservationService.saveReservation(reservation);
+
+                    listOfReservations.setItems(reservationService.getAllReservationsWhereUserId(getUserId(select.getValue())));
+                } else {
+                    Notification.show("Zaloguj się");
+                }
+            });
+        }
 
         btnSubmit.addClickListener(click -> {
-            if (isValid(tfName)) {
+            if (isValid(tfName.getValue())) {
                 User savedUser = userService.saveUser(new User(tfName.getValue(), tfEmail.getValue()));
                 Notification.show("Zapisano użytkownika " + savedUser.getName() + " o ID: " + savedUser.getId());
-                //TODO make write to file a registration message
                 addLogToFile(LocalDateTime.now().toString() + " - " + savedUser.getName() + " - zapisano użytkownika " + savedUser.getName());
                 grid.setItems(userService.getAllUsers());
+                select.setItems(userService.getAllUsersNames());
             } else {
                 Notification.show("Niepoprawne dane");
             }
-
         });
 
         select.addValueChangeListener(click -> {
             String userName = select.getValue();
             User user = userService.getUserByName(userName);
-            emailOfUser.setValue(user.getEmail());
+            if (userName.isEmpty()) {
+                System.out.println("wybrano puste pole");
+            } else {
+                emailOfUser.setValue(user.getEmail());
+                listOfReservations.setItems(reservationService.getAllReservationsWhereUserId(getUserId(userName)));
+            }
         });
 
         btnUpdateEmail.addClickListener(click -> {
@@ -200,6 +199,11 @@ public class HelloSii extends UI {
 
     }
 
+    private Long getUserId(String userName) {
+        User userByName = userService.getUserByName(userName);
+        return userByName.getId();
+    }
+
     private boolean isSomeoneLogged(String s) {
         boolean isLogged = true;
         if (s.equals("null")) {
@@ -208,11 +212,10 @@ public class HelloSii extends UI {
         return isLogged;
     }
 
-    private boolean isValid(TextField tfName) {
+    private boolean isValid(String tfName) {
         boolean isValid = true;
 
-        String nameValue = tfName.getValue();
-        if (nameValue.isEmpty()) {
+        if (tfName.isEmpty()) {
             isValid = false;
         }
         return isValid;

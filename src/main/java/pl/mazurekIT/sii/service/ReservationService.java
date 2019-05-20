@@ -14,6 +14,8 @@ public interface ReservationService {
 
     List<Reservation> getAllReservations();
 
+    List<Reservation> getAllReservationsWhereUserId(Long userId);
+
     long countReservations();
 
 

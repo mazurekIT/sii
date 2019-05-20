@@ -1,15 +1,34 @@
-﻿2019-05-20T01:25:35.346 - rer - zapisano się na wykład 1-12-B
-2019-05-20T01:25:36.891 - rer - zapisano się na wykład 2-10-B
-2019-05-20T01:25:38.203 - rer - zapisano się na wykład 2-10-A
-2019-05-20T01:25:39.047 - rer - zapisano się na wykład 2-12-A
-2019-05-20T01:25:40.016 - rer - zapisano się na wykład 2-12-B
-2019-05-20T01:25:41.096 - rer - zapisano się na wykład 2-12-C
-2019-05-20T01:25:41.717 - rer - zapisano się na wykład 2-10-C
-2019-05-20T01:25:42.551 - rer - zapisano się na wykład 1-12-C
-2019-05-20T01:25:43.550 - rer - zapisano się na wykład 1-12-A
-2019-05-20T01:25:44.025 - rer - zapisano się na wykład 1-10-A
-2019-05-20T01:25:44.488 - rer - zapisano się na wykład 1-10-B
-2019-05-20T01:25:44.818 - rer - zapisano się na wykład 1-10-C
-2019-05-20T01:35:26.896 - rer - zapisano się na wykład 1-10-A
-2019-05-20T09:15:58.639 - afyts - zapisano się na wykład 1-10-A
+﻿2019-05-20T09:15:58.639 - afyts - zapisano się na wykład 1-10-A
 2019-05-20T09:39:44.834 - qwew - zapisano się na wykład 1-10-A
+2019-05-20T09:58:51.897 - weer2 - zapisano użytkownika weer2
+2019-05-20T10:01:11.480 - klon - zapisano użytkownika klon
+2019-05-20T10:05:41.531 - dab - zapisano użytkownika dab
+2019-05-20T10:14:34.343 - huhu - zapisano użytkownika huhu
+2019-05-20T12:01:44.683 - qwew - zapisano się na wykład 1-10-A
+2019-05-20T12:01:45.351 - qwew - zapisano się na wykład 1-12-B
+2019-05-20T12:01:45.865 - qwew - zapisano się na wykład 2-10-B
+2019-05-20T12:01:46.249 - qwew - zapisano się na wykład 2-10-A
+2019-05-20T12:01:46.766 - qwew - zapisano się na wykład 1-10-B
+2019-05-20T12:01:47.083 - qwew - zapisano się na wykład 1-12-A
+2019-05-20T12:04:16.378 - weer - zapisano się na wykład 1-10-A
+2019-05-20T12:04:18.099 - weer - zapisano się na wykład 1-12-B
+2019-05-20T12:04:20.682 - hgjfg - zapisano się na wykład 1-10-B
+2019-05-20T12:04:21.258 - hgjfg - zapisano się na wykład 1-12-C
+2019-05-20T12:04:22.858 - hgjfg - zapisano się na wykład 2-10-A
+2019-05-20T12:04:23.509 - hgjfg - zapisano się na wykład 2-12-B
+2019-05-20T12:04:25.905 - weer2 - zapisano się na wykład 1-12-C
+2019-05-20T12:04:26.265 - weer2 - zapisano się na wykład 1-12-B
+2019-05-20T12:04:28.806 - dab - zapisano się na wykład 1-10-B
+2019-05-20T12:04:29.152 - dab - zapisano się na wykład 1-12-B
+2019-05-20T12:05:30.983 - asa - zapisano się na wykład 1-10-A
+2019-05-20T12:10:35.475 - aaa - zapisano użytkownika aaa
+2019-05-20T12:10:42.585 - bbb - zapisano użytkownika bbb
+2019-05-20T12:10:46.966 - ccc - zapisano użytkownika ccc
+2019-05-20T12:10:51.267 - ddd - zapisano użytkownika ddd
+2019-05-20T12:10:55.275 - eee - zapisano użytkownika eee
+2019-05-20T12:10:59.274 - fff - zapisano użytkownika fff
+2019-05-20T12:11:03.656 - aaa - zapisano się na wykład 1-10-A
+2019-05-20T12:11:05.775 - bbb - zapisano się na wykład 1-10-A
+2019-05-20T12:11:07.912 - ccc - zapisano się na wykład 1-10-A
+2019-05-20T12:11:10.511 - ddd - zapisano się na wykład 1-10-A
+2019-05-20T12:11:16.441 - eee - zapisano się na wykład 1-10-A
