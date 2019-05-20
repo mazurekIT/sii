@@ -154,32 +154,41 @@ public class HelloSii extends UI {
         for (Button button : buttonsReservation) {
             gridConferencePlan.addComponent(button);
             String btnCaption = button.getCaption();
-            buttonVisibility(button);
+            buttonVisibilityAfterFiveReservations(button);
 
             button.addClickListener(click -> {
                 String s = select.getValue();
                 if (isSomeoneLogged(s)) {
-                    buttonVisibility(button);
                     Notification.show("Użytkownik " + s + " zapisał się na wykład");
                     addLogToFile(LocalDateTime.now().toString() + " - " + s + " - zapisano się na wykład " + btnCaption);
                     User user = userService.getUserByName(s);
                     Reservation reservation = new Reservation(btnCaption, user.getId());
                     reservationService.saveReservation(reservation);
 
+                    buttonVisibilityAfterFiveReservations(button);
                     listOfReservationsGrid.setItems(reservationService.getAllReservationsWhereUserId(getUserId(select.getValue())));
                 } else {
                     Notification.show("Zaloguj się");
                 }
+            });
+
+            select.addValueChangeListener(click->{
+                buttonVisibilityAfterFiveReservations(button);
             });
         }
 
         listOfReservationsGrid.addItemClickListener(click -> {
             //TODO przy usuwaniu rezerwacji zmienić widoczność buttonów
 
+
             reservationService.deleteReservation(click.getItem().getId());
             Notification.show("Usunięto rezerwację");
             addLogToFile(LocalDateTime.now().toString() + " - " + select.getValue() + " - usunięto rezerwację na wykład " + click.getItem().getCode() );
             listOfReservationsGrid.setItems(reservationService.getAllReservationsWhereUserId(getUserId(select.getValue())));
+
+            for (Button button : buttonsReservation){
+                buttonVisibilityAfterFiveReservations(button);
+            }
         });
 
         btnSubmit.addClickListener(click -> {
@@ -217,9 +226,9 @@ public class HelloSii extends UI {
 
     }
 
-    private void buttonVisibility(Button button){
+    private void buttonVisibilityAfterFiveReservations(Button button){
         Long numberOfReservations = reservationService.countReservationByCode(button.getCaption());
-        if(numberOfReservations>=4L){
+        if(numberOfReservations>4L){
             button.setEnabled(false);
         }else {
             button.setEnabled(true);
