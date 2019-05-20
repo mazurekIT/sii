@@ -57,21 +57,23 @@ public class HelloSii extends UI {
         /*
         user reservations
          */
-        Grid<Reservation> listOfReservations = new Grid<>();
-        listOfReservations.setHeight("200");
-        listOfReservations.addColumn(Reservation::getCode).setCaption("Rezerwacje użytkownika");
-        mainLayout.addComponent(listOfReservations);
+        Grid<Reservation> listOfReservationsGrid = new Grid<>();
+        listOfReservationsGrid.setHeight("200");
+        listOfReservationsGrid.addColumn(Reservation::getId).setCaption("Id").setWidth(70);
+        listOfReservationsGrid.addColumn(Reservation::getCode).setCaption("Rezerwacje użytkownika");
+        mainLayout.addComponent(listOfReservationsGrid);
+
+        listOfReservationsGrid.setSelectionMode(Grid.SelectionMode.NONE);
+
 
 
         /*
          conference plan view
          */
-        Panel conferencePlan = new Panel("Plan Konferencji");
-        conferencePlan.addStyleName("register-panel");
-        conferencePlan.setSizeUndefined();
-        mainLayout.addComponent(conferencePlan);
 
         GridLayout gridConferencePlan = new GridLayout(5, 6);
+        gridConferencePlan.setHeight("260px");
+        gridConferencePlan.setWidth("510px");
         gridConferencePlan.setSpacing(true);
         gridConferencePlan.addStyleName("grid-plan");
         gridConferencePlan.setSizeUndefined();
@@ -103,8 +105,8 @@ public class HelloSii extends UI {
         buttonsReservation.add(new Button("2-12-B"));
         buttonsReservation.add(new Button("2-12-C"));
 
-        conferencePlan.setContent(gridConferencePlan);
-        mainLayout.addComponent(conferencePlan);
+
+        mainLayout.addComponent(gridConferencePlan);
 
 
         /*
@@ -132,7 +134,12 @@ public class HelloSii extends UI {
 
         registrationPanel.setContent(registrationForm);
 
+        /*
+        list of all users
+         */
+
         Grid<User> grid = new Grid<>();
+        grid.setHeight("300px");
         grid.addColumn(User::getId).setCaption("ID");
         grid.addColumn(User::getName).setCaption("Nazwa");
         grid.addColumn(User::getEmail).setCaption("Email");
@@ -147,22 +154,33 @@ public class HelloSii extends UI {
         for (Button button : buttonsReservation) {
             gridConferencePlan.addComponent(button);
             String btnCaption = button.getCaption();
+            buttonVisibility(button);
 
             button.addClickListener(click -> {
                 String s = select.getValue();
                 if (isSomeoneLogged(s)) {
+                    buttonVisibility(button);
                     Notification.show("Użytkownik " + s + " zapisał się na wykład");
                     addLogToFile(LocalDateTime.now().toString() + " - " + s + " - zapisano się na wykład " + btnCaption);
                     User user = userService.getUserByName(s);
                     Reservation reservation = new Reservation(btnCaption, user.getId());
                     reservationService.saveReservation(reservation);
 
-                    listOfReservations.setItems(reservationService.getAllReservationsWhereUserId(getUserId(select.getValue())));
+                    listOfReservationsGrid.setItems(reservationService.getAllReservationsWhereUserId(getUserId(select.getValue())));
                 } else {
                     Notification.show("Zaloguj się");
                 }
             });
         }
+
+        listOfReservationsGrid.addItemClickListener(click -> {
+            //TODO przy usuwaniu rezerwacji zmienić widoczność buttonów
+
+            reservationService.deleteReservation(click.getItem().getId());
+            Notification.show("Usunięto rezerwację");
+            addLogToFile(LocalDateTime.now().toString() + " - " + select.getValue() + " - usunięto rezerwację na wykład " + click.getItem().getCode() );
+            listOfReservationsGrid.setItems(reservationService.getAllReservationsWhereUserId(getUserId(select.getValue())));
+        });
 
         btnSubmit.addClickListener(click -> {
             if (isValid(tfName.getValue())) {
@@ -183,7 +201,7 @@ public class HelloSii extends UI {
                 System.out.println("wybrano puste pole");
             } else {
                 emailOfUser.setValue(user.getEmail());
-                listOfReservations.setItems(reservationService.getAllReservationsWhereUserId(getUserId(userName)));
+                listOfReservationsGrid.setItems(reservationService.getAllReservationsWhereUserId(getUserId(userName)));
             }
         });
 
@@ -197,6 +215,15 @@ public class HelloSii extends UI {
         });
 
 
+    }
+
+    private void buttonVisibility(Button button){
+        long numberOfReservations = reservationService.countReservationByCode(button.getCaption());
+        if(numberOfReservations>=4L){
+            button.setEnabled(false);
+        }else {
+            button.setEnabled(true);
+        }
     }
 
     private Long getUserId(String userName) {

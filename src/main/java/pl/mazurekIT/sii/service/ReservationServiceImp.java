@@ -39,9 +39,15 @@ public class ReservationServiceImp implements ReservationService {
         return reservationRepository.findAllByUserId(userId);
     }
 
+    @Override
+    public long countReservationByCode(String codeName) {
+        return reservationRepository.countReservationByCode(codeName);
+    }
+
 
     @Override
-    public long countReservations() {
-        return reservationRepository.count();
+    public void deleteReservation(Long id) {
+        reservationRepository.delete(id);
+
     }
 }
