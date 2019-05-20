@@ -19,19 +19,8 @@ public class ReservationServiceImp implements ReservationService {
     }
 
     @Override
-    public Reservation getReservationById(Long id) {
-        return reservationRepository.findById(id);
-    }
-
-    @Override
-    public Reservation getReservationByCode(String code) {
-        return reservationRepository.findByCode(code);
-    }
-
-
-    @Override
-    public List<Reservation> getAllReservations() {
-        return (List<Reservation>) reservationRepository.findAll();
+    public List<Reservation> getAllReserwationWhereCodeIsLike(String codeLike) {
+        return reservationRepository.findAllByCodeStartingWith(codeLike);
     }
 
     @Override
@@ -43,7 +32,6 @@ public class ReservationServiceImp implements ReservationService {
     public Long countReservationByCode(String codeName) {
         return reservationRepository.countReservationByCode(codeName);
     }
-
 
     @Override
     public void deleteReservation(Long id) {

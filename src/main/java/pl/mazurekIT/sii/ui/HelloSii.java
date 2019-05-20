@@ -149,8 +149,6 @@ public class HelloSii extends UI {
         /*
         buttons events
          */
-        //TODO set visibility after 5 reservations
-        //TODO set disable topic on the same hour after reserved one
         for (Button button : buttonsReservation) {
             gridConferencePlan.addComponent(button);
             String btnCaption = button.getCaption();
@@ -172,24 +170,28 @@ public class HelloSii extends UI {
                 }
             });
 
-            select.addValueChangeListener(click->{
+
+            select.addValueChangeListener(click -> {
+                //TODO set disable topic on the same hour after reserved one
+                buttonVisibilityAfterReservationInOneHour(button, select.getValue());
+
+                //this is ok
                 buttonVisibilityAfterFiveReservations(button);
             });
         }
 
+
         listOfReservationsGrid.addItemClickListener(click -> {
-            //TODO przy usuwaniu rezerwacji zmienić widoczność buttonów
-
-
             reservationService.deleteReservation(click.getItem().getId());
             Notification.show("Usunięto rezerwację");
-            addLogToFile(LocalDateTime.now().toString() + " - " + select.getValue() + " - usunięto rezerwację na wykład " + click.getItem().getCode() );
+            addLogToFile(LocalDateTime.now().toString() + " - " + select.getValue() + " - usunięto rezerwację na wykład " + click.getItem().getCode());
             listOfReservationsGrid.setItems(reservationService.getAllReservationsWhereUserId(getUserId(select.getValue())));
 
-            for (Button button : buttonsReservation){
+            for (Button button : buttonsReservation) {
                 buttonVisibilityAfterFiveReservations(button);
             }
         });
+
 
         btnSubmit.addClickListener(click -> {
             if (isValid(tfName.getValue())) {
@@ -203,6 +205,7 @@ public class HelloSii extends UI {
             }
         });
 
+
         select.addValueChangeListener(click -> {
             String userName = select.getValue();
             User user = userService.getUserByName(userName);
@@ -214,6 +217,7 @@ public class HelloSii extends UI {
             }
         });
 
+
         btnUpdateEmail.addClickListener(click -> {
             User user = userService.getUserByName(select.getValue());
             user.setEmail(emailOfUser.getValue());
@@ -223,14 +227,31 @@ public class HelloSii extends UI {
 
         });
 
-
     }
 
-    private void buttonVisibilityAfterFiveReservations(Button button){
+    private void buttonVisibilityAfterReservationInOneHour(Button button, String selectValue) {
+        List<Reservation> allReservationsWhereUserId = reservationService.getAllReservationsWhereUserId(getUserId(selectValue));
+        List<String> codeTrimName = new ArrayList<>();
+
+        for (Reservation reservation : allReservationsWhereUserId) {
+            codeTrimName.add(reservation.getCode().substring(0, 5));
+        }
+        String buttonSubstring = button.getCaption().substring(0, 5);
+
+        boolean flag = true;
+        for (String x : codeTrimName) {
+            if (x.equals(buttonSubstring)) {
+                flag = false;
+            }
+        }
+        button.setEnabled(flag);
+    }
+
+    private void buttonVisibilityAfterFiveReservations(Button button) {
         Long numberOfReservations = reservationService.countReservationByCode(button.getCaption());
-        if(numberOfReservations>4L){
+        if (numberOfReservations > 4L) {
             button.setEnabled(false);
-        }else {
+        } else {
             button.setEnabled(true);
         }
     }
@@ -250,7 +271,6 @@ public class HelloSii extends UI {
 
     private boolean isValid(String tfName) {
         boolean isValid = true;
-
         if (tfName.isEmpty()) {
             isValid = false;
         }
