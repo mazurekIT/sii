@@ -11,5 +11,5 @@ public interface ReservationRepository extends CrudRepository<Reservation, Long>
     Reservation findByCode(String code);
     Reservation findById(Long id);
     List<Reservation> findAllByUserId(Long userId);
-    long countReservationByCode(String codeName);
+    Long countReservationByCode(String codeName);
 }

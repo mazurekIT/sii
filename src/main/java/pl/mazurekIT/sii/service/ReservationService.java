@@ -16,7 +16,7 @@ public interface ReservationService {
 
     List<Reservation> getAllReservationsWhereUserId(Long userId);
 
-    long countReservationByCode(String codeName);
+    Long countReservationByCode(String codeName);
 
     void deleteReservation(Long id);
 

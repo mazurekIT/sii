@@ -218,7 +218,7 @@ public class HelloSii extends UI {
     }
 
     private void buttonVisibility(Button button){
-        long numberOfReservations = reservationService.countReservationByCode(button.getCaption());
+        Long numberOfReservations = reservationService.countReservationByCode(button.getCaption());
         if(numberOfReservations>=4L){
             button.setEnabled(false);
         }else {

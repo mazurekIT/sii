@@ -40,7 +40,7 @@ public class ReservationServiceImp implements ReservationService {
     }
 
     @Override
-    public long countReservationByCode(String codeName) {
+    public Long countReservationByCode(String codeName) {
         return reservationRepository.countReservationByCode(codeName);
     }
 
