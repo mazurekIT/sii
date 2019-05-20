@@ -1,10 +1,12 @@
 package pl.mazurekIT.sii.model;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 @Entity
-@Table(name = "reservation")
-public class Reservation {
+public class Reservation{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -12,5 +14,37 @@ public class Reservation {
 
     private String code;
 
+    private Long userId;
 
+    public Reservation(String code, Long userId) {
+        this.code = code;
+        this.userId = userId;
+    }
+
+    public Reservation() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 }

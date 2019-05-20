@@ -14,8 +14,6 @@ public interface ReservationService {
 
     List<Reservation> getAllReservations();
 
-    Reservation updateReservation(Reservation reservation);
-
     long countReservations();
 
 

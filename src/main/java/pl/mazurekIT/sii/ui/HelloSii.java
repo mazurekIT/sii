@@ -7,7 +7,9 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.spring.annotation.SpringUI;
 import com.vaadin.ui.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import pl.mazurekIT.sii.model.Reservation;
 import pl.mazurekIT.sii.model.User;
+import pl.mazurekIT.sii.service.ReservationService;
 import pl.mazurekIT.sii.service.UserService;
 
 import java.io.FileWriter;
@@ -24,6 +26,9 @@ public class HelloSii extends UI {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ReservationService reservationService;
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
@@ -81,36 +86,42 @@ public class HelloSii extends UI {
         gridConferencePlan.addComponent(new Label("10:00-11:45"), 1, 4, 1, 4);
         gridConferencePlan.addComponent(new Label("12:00-13:45"), 1, 5, 1, 5);
 
-        List<String> buttonsNames = new ArrayList<>();
-        buttonsNames.add("1-10-A");
-        buttonsNames.add("1-10-B");
-        buttonsNames.add("1-10-C");
-        buttonsNames.add("1-12-A");
-        buttonsNames.add("1-12-B");
-        buttonsNames.add("1-12-C");
-        buttonsNames.add("2-10-A");
-        buttonsNames.add("2-10-B");
-        buttonsNames.add("2-10-C");
-        buttonsNames.add("2-12-A");
-        buttonsNames.add("2-12-B");
-        buttonsNames.add("2-12-C");
+
+        List<Button> buttonsReservation = new ArrayList<>();
+        buttonsReservation.add(new Button("1-10-A"));
+        buttonsReservation.add(new Button("1-10-B"));
+        buttonsReservation.add(new Button("1-10-C"));
+        buttonsReservation.add(new Button("1-12-A"));
+        buttonsReservation.add(new Button("1-12-B"));
+        buttonsReservation.add(new Button("1-12-C"));
+        buttonsReservation.add(new Button("2-10-A"));
+        buttonsReservation.add(new Button("2-10-B"));
+        buttonsReservation.add(new Button("2-10-C"));
+        buttonsReservation.add(new Button("2-12-A"));
+        buttonsReservation.add(new Button("2-12-B"));
+        buttonsReservation.add(new Button("2-12-C"));
 
 
         //TODO set visibility after 5 reservations
         //TODO set disable topic on the same hour after reserved one
-        for (String button : buttonsNames) {
-            gridConferencePlan.addComponent(new Button(button, clickEvent -> {
-                String s = String.valueOf(select.getValue());
+        for (Button button : buttonsReservation) {
+            gridConferencePlan.addComponent(button);
+
+            button.addClickListener(click -> {
+                String s = select.getValue();
+                String btnCaption = button.getCaption();
                 if (isSomeoneLogged(s)) {
                     Notification.show("Użytkownik " + s + " zapisał się na wykład");
-                    addLogToFile(LocalDateTime.now().toString() + " - " + s + " - zapisano się na wykład " + button);
-
-
+                    addLogToFile(LocalDateTime.now().toString() + " - " + s + " - zapisano się na wykład " + btnCaption );
+                    User user = userService.getUserByName(s);
+                    Reservation reservation = new Reservation(btnCaption, user.getId());
+                    reservationService.saveReservation(reservation);
                 } else {
                     Notification.show("Zaloguj się");
                 }
-            }));
+            });
         }
+
 
         conferencePlan.setContent(gridConferencePlan);
         mainLayout.addComponent(conferencePlan);
@@ -147,7 +158,16 @@ public class HelloSii extends UI {
         grid.addColumn(User::getEmail).setCaption("Email");
         grid.setItems(userService.getAllUsers());
         mainLayout.addComponent(grid);
-
+//
+//        Grid<Reservation> gridReser = new Grid<>();
+//        gridReser.addColumn(Reservation::getId).setCaption("ID");
+//        gridReser.addColumn(Reservation::getCode).setCaption("Code");
+//        gridReser.addColumn(Reservation::getUserId).setCaption("userid");
+//        gridReser.setItems(reservationService.getAllReservations());
+//        mainLayout.addComponent(gridReser);
+        /*
+        buttons events
+         */
 
         btnSubmit.addClickListener(click -> {
             if (isValid(tfName)) {
@@ -201,10 +221,10 @@ public class HelloSii extends UI {
 
     private void addLogToFile(String logg) {
         try {
-            FileWriter saveLogg = new FileWriter("powiadomienia.txt", true);
-            saveLogg.append(logg);
-            saveLogg.append(System.getProperty("line.separator"));
-            saveLogg.close();
+            FileWriter saveLog = new FileWriter("powiadomienia.txt", true);
+            saveLog.append(logg);
+            saveLog.append(System.getProperty("line.separator"));
+            saveLog.close();
         } catch (IOException ex) {
             System.out.println("Bład zapisu");
         }
